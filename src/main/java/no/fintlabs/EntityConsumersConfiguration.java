@@ -34,7 +34,7 @@ public class EntityConsumersConfiguration {
                     AzureExternalUser externalAzureUser = consumerRecord.value();
                     log.debug("Trying to save: " + externalAzureUser.getUserName());
                     if (externalAzureUser.isValid()) {
-                        azureExternalUserCache.put(externalAzureUser.getIdpUserObjectId().toString(),externalAzureUser);
+                        azureExternalUserCache.put(externalAzureUser.getIdpUserObjectId(),externalAzureUser);
                         log.debug("Saved to cache: " + externalAzureUser.getIdpUserObjectId());
                     }
                     else {
@@ -54,13 +54,17 @@ public class EntityConsumersConfiguration {
     ConcurrentMessageListenerContainer<String, ExternalUser> userEntityConsumer(
             FintCache<String, Integer> publishedUserHashCache
     ) {
-        return entityConsumerFactoryService.createFactory(
+        ConcurrentMessageListenerContainer<String,ExternalUser> consumer = entityConsumerFactoryService.createFactory(
                 ExternalUser.class,
                 consumerRecord -> publishedUserHashCache.put(
                         consumerRecord.value().getIdentityProviderUserObjectId().toString(),
                         consumerRecord.value().hashCode()
                 )
         ).createContainer(EntityTopicNameParameters.builder().resource("externaluser").build());
+        return consumer;
+
+
     }
+
 
 }
