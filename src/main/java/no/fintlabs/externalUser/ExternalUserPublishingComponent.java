@@ -17,7 +17,10 @@ public class ExternalUserPublishingComponent {
 
     private final FintCache<String, Integer> publishedExternalUserHashCache;
 
-    public ExternalUserPublishingComponent(ExternalUserProducerService externalUserProducerService, AzureExternalUserService azureExternalUserService, FintCache<String, Integer> publishedExternalUserHashCache) {
+    public ExternalUserPublishingComponent(
+            ExternalUserProducerService externalUserProducerService,
+            AzureExternalUserService azureExternalUserService,
+            FintCache<String, Integer> publishedExternalUserHashCache) {
         this.externalUserProducerService = externalUserProducerService;
         this.azureExternalUserService = azureExternalUserService;
         this.publishedExternalUserHashCache = publishedExternalUserHashCache;
@@ -42,7 +45,7 @@ public class ExternalUserPublishingComponent {
         log.info("Published {} external users to kafka", publishExternalUsers.size());
 
     }
-    private boolean isExternalUserChanged(ExternalUser externalUser) {
+    public boolean isExternalUserChanged(ExternalUser externalUser) {
         return publishedExternalUserHashCache
                 .getOptional(externalUser.getIdentityProviderUserObjectId().toString())
                 .map(publishedExternalUserHash -> publishedExternalUserHash != externalUser.hashCode())
